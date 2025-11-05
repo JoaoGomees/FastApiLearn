@@ -9,6 +9,13 @@ class GoalsRepository(Repository):
         self.collection = self.database["Goal"]
 
     def add_goal(self, goal: Goal):
-        self.collection.insert_one(goal.__dict__)
+        return self.collection.insert_one(goal.__dict__).inserted_id
 
-        
+    def get_goal(self, id: str):
+        goal_data = self.collection.find_one({"_id": ObjectId(id)})
+        if goal_data:
+            return mapper.map_goal(goal_data)
+        else:
+            return {
+                "message": "Goal not found"
+            }
